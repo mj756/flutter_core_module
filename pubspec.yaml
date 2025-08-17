@@ -33,6 +33,10 @@ dependencies:
   path_provider: ^2.1.5
   hive: ^2.2.3
   event_bus: ^2.0.1
+  connectivity_plus: ^6.1.5
+  clarity_flutter: ^1.3.0
+  intl: ^0.20.2
+
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -45,7 +49,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: false
-  module:
-    androidX: true
-    androidPackage: com.example.flutter_core_module
-    iosBundleIdentifier: com.example.flutterCoreModule
+  plugin:
+    platforms:
+      android:
+        package: com.example.flutter_core_module
+        pluginClass: FlutterCoreModule
+      ios:
+        pluginClass: FlutterCoreModule
+#  module:
+#    androidX: true
+#    androidPackage: com.example.flutter_core_module
+#    iosBundleIdentifier: com.example.flutterCoreModule
+

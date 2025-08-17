@@ -36,33 +36,31 @@ class LoggerService {
     String coloredMessage;
     switch (level) {
       case LogLevel.debug:
-        coloredMessage = "\x1B[34m$logMessage\x1B[0m"; // Blue
+        coloredMessage = "$logMessage"; // Blue
         break;
       case LogLevel.info:
-        coloredMessage = "\x1B[32m$logMessage\x1B[0m"; // Green
+        coloredMessage = "\$logMessage"; // Green
         break;
       case LogLevel.warning:
-        coloredMessage = "\x1B[33m$logMessage\x1B[0m"; // Yellow
+        coloredMessage = "$logMessage"; // Yellow
         break;
       case LogLevel.error:
-        coloredMessage = "\x1B[31m$logMessage\x1B[0m"; // Red
+        coloredMessage = "$logMessage"; // Red
         break;
     }
 
     developer.log(coloredMessage);
-    unawaited(_writeLogToFile(message: coloredMessage));
+    _writeLogToFile(message: coloredMessage);
   }
 
   Future<void> _writeLogToFile({required String message}) async {
     try {
       if (kIsWeb) {
         return;
-      } else if (Platform.isAndroid == false || Platform.isIOS == false) {
-        return;
       }
       final date = DateTime.now();
       final fileName = "${date.year}-${date.month}-${date.day}.log";
-      final internalBaseDir = await getApplicationSupportDirectory();
+      final internalBaseDir = await getApplicationDocumentsDirectory();
       final internalLogsDir = Directory("${internalBaseDir.path}/app_logs");
       if (!await internalLogsDir.exists()) {
         await internalLogsDir.create(recursive: true);

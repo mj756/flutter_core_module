@@ -9,6 +9,13 @@
             </list>
           </value>
         </entry>
+        <entry key="archive">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/archive-4.0.7/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="args">
           <value>
             <list>
@@ -44,6 +51,13 @@
             </list>
           </value>
         </entry>
+        <entry key="clarity_flutter">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/clarity_flutter-1.3.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="clock">
           <value>
             <list>
@@ -55,6 +69,20 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/collection-1.19.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="connectivity_plus">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="connectivity_plus_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-2.0.1/lib" />
             </list>
           </value>
         </entry>
@@ -72,17 +100,24 @@
             </list>
           </value>
         </entry>
-        <entry key="cupertino_icons">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="dbus">
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dbus-0.7.11/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="device_info_plus">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus-11.5.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="device_info_plus_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.3/lib" />
             </list>
           </value>
         </entry>
@@ -114,6 +149,13 @@
             </list>
           </value>
         </entry>
+        <entry key="file">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/file-7.0.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="firebase_core">
           <value>
             <list>
@@ -132,20 +174,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core_web-3.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="firebase_crashlytics">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics-5.0.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="firebase_crashlytics_platform_interface">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics_platform_interface-3.8.11/lib" />
             </list>
           </value>
         </entry>
@@ -247,10 +275,31 @@
             </list>
           </value>
         </entry>
+        <entry key="image">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image-4.5.4/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="intl">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.20.2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="js">
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.7.2/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="json_annotation">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
             </list>
           </value>
         </entry>
@@ -300,6 +349,27 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/meta-1.16.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="nm">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/nm-0.5.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="package_info_plus">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus-8.3.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="package_info_plus_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.2.1/lib" />
             </list>
           </value>
         </entry>
@@ -422,6 +492,13 @@
             </list>
           </value>
         </entry>
+        <entry key="posix">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/posix-6.0.3/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="sky_engine">
           <value>
             <list>
@@ -506,6 +583,20 @@
             </list>
           </value>
         </entry>
+        <entry key="win32">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.14.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="win32_registry">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/win32_registry-2.1.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="xdg_directories">
           <value>
             <list>
@@ -524,26 +615,30 @@
     </properties>
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.60/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/archive-4.0.7/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/args-2.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/asn1lib-1.6.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/async-2.13.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/boolean_selector-2.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/characters-1.4.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/clarity_flutter-1.3.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/clock-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/collection-1.19.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-2.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/convert-3.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/crypto-3.0.6/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dbus-0.7.11/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus-11.5.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/encrypt-5.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/event_bus-2.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/fake_async-1.3.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/ffi-2.1.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/file-7.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-4.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core_web-3.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics-5.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics_platform_interface-3.8.11/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging-16.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging_platform_interface-4.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging_web-4.0.0/lib" />
@@ -555,7 +650,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/hive-2.2.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image-4.5.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.20.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.7.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker-11.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.10/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.2/lib" />
@@ -563,6 +661,9 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/matcher-0.12.17/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/material_color_utilities-0.11.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/meta-1.16.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/nm-0.5.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus-8.3.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path-1.9.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider-2.1.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17/lib" />
@@ -580,6 +681,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/platform-3.1.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pointycastle-3.9.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/posix-6.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/source_span-1.10.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stack_trace-1.12.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stream_channel-2.1.4/lib" />
@@ -591,6 +693,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-1.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.14.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32_registry-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xml-6.5.0/lib" />
       <root url="file://$PROJECT_DIR$/../../flutter/bin/cache/pkg/sky_engine/lib" />

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -19,10 +20,12 @@
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus-11.5.0/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-4.0.0/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics-5.0.0/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging-16.0.0/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_local_notifications-19.4.0/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus-8.3.1/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/permission_handler_android-13.0.1/android" />
             <option value="$PROJECT_DIR$" />

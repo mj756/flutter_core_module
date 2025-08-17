@@ -41,19 +41,19 @@ class NotificationService {
   Future<String> getFcmToken({String vapidKeyForWeb = ''}) async {
     String token = '';
     try {
-      if (PreferenceService().getString('prefKeyFcmToken').isEmpty) {
+      if (PreferenceService().getString(key:'prefKeyFcmToken').isEmpty) {
         if (kIsWeb) {
           token =
               await FirebaseMessaging.instance.getToken(
                 vapidKey: vapidKeyForWeb,
               ) ??
               '';
-          PreferenceService().setString('prefKeyFcmToken', token);
+          PreferenceService().setString(key:'prefKeyFcmToken', value:token);
         } else {
           token = await FirebaseMessaging.instance.getToken() ?? '';
         }
       } else {
-        token = PreferenceService().getString('prefKeyFcmToken');
+        token = PreferenceService().getString(key:'prefKeyFcmToken');
       }
     } catch (e) {
       LoggerService().log(message: e);
@@ -105,9 +105,7 @@ class NotificationService {
       onDidReceiveNotificationResponse: (resp) {
         _tapStreamController.add(resp);
       },
-      onDidReceiveBackgroundNotificationResponse: (resp) {
-        _tapStreamController.add(resp);
-      },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 

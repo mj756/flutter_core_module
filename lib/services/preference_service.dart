@@ -31,32 +31,33 @@ class PreferenceService {
         }
       }
     } catch (e) {
-      //
+      LoggerService().log(message: e);
     }
   }
 
-  void clearLoginCredential() {
+  void clear() {
     _box.clear();
   }
 
-  bool contains(String key) {
-    return _box.containsKey(key) ?? false;
+  bool contains({required String key}) {
+    return _box.containsKey(key);
   }
 
-  void setInt(String key, int value) {
+  void setInt({required String key, required int value}) {
     if (isEncryptionEnabled) {
-      setString(key, value.toString());
+      setString(key:key, value:value.toString());
     } else {
       _box.put(key, value);
     }
   }
 
-  int getInt(String key, {int defaultValue = 0}) {
+  int getInt({required String key,int defaultValue = 0}) {
     if (isEncryptionEnabled) {
       try {
-        String temp = getString(key);
+        String temp = getString(key:key);
         return int.parse(temp);
       } catch (e) {
+        LoggerService().log(message: e);
         return defaultValue;
       }
     } else {
@@ -64,7 +65,7 @@ class PreferenceService {
     }
   }
 
-  void setString(String key, String value) {
+  void setString({required String key, required String value}) {
     try {
       if (isEncryptionEnabled) {
         if (value.isEmpty) {
@@ -82,7 +83,7 @@ class PreferenceService {
     }
   }
 
-  String getString(String key, {String defaultValue = ''}) {
+  String getString({required String key,String defaultValue = ''}) {
     try {
       String value = _box.get(key, defaultValue: defaultValue);
       if (isEncryptionEnabled) {
@@ -96,41 +97,41 @@ class PreferenceService {
     }
   }
 
-  void setBoolean(String key, bool value) {
+  void setBoolean({required String key, required bool value}) {
     if (isEncryptionEnabled) {
-      setString(key, value.toString());
+      setString(key:key, value:value.toString());
     } else {
       _box.put(key, value);
     }
   }
 
-  bool getBoolean(String key, {bool defaultValue = false}) {
+  bool getBoolean({required String key,bool defaultValue = false}) {
     if (isEncryptionEnabled) {
-      String temp = getString(key);
+      String temp = getString(key:key);
       return temp == 'true';
     } else {
       return _box.get(key, defaultValue: defaultValue) ?? defaultValue;
     }
   }
 
-  void setDouble(String key, double value) {
+  void setDouble({required String key, required double value}) {
     if (isEncryptionEnabled) {
-      setString(key, value.toString());
+      setString(key:key, value:value.toString());
     } else {
       _box.put(key, value);
     }
   }
 
-  double getDouble(String key) {
+  double getDouble({required String key}) {
     if (isEncryptionEnabled) {
-      String temp = getString(key);
+      String temp = getString(key:key);
       return double.tryParse(temp) ?? 0.0;
     } else {
       return _box.get(key, defaultValue: 0.0) ?? 0.0;
     }
   }
 
-  void setStringList(String key, List<String> value) {
+  void setStringList({required String key, required List<String> value}) {
     List<String> temp = [];
     if (isEncryptionEnabled) {
       for (var val in value) {
@@ -146,7 +147,7 @@ class PreferenceService {
     _box.put(key, temp);
   }
 
-  List<String> getStringList(String key) {
+  List<String> getStringList({required String key}) {
     List<String> temp =
         (_box.get(key, defaultValue: <String>[]) as List?)?.cast<String>() ??
         [];
@@ -160,7 +161,7 @@ class PreferenceService {
     return temp;
   }
 
-  void remove(String key) {
+  void remove({required String key}) {
     _box.delete(key);
   }
 }

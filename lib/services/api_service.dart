@@ -1,98 +1,153 @@
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
+import 'logger_service.dart';
+import 'preference_service.dart';
+
+//5%=FVb7L%#c+f+J
+
 class ApiService {
+  factory ApiService() => _instance;
   ApiService._internal();
   static final ApiService _instance = ApiService._internal();
-  factory ApiService() => _instance;
-  int timeoutInSeconds = 30;
+  int timeOut = 60;
+  String authKey='';
 
-  void setTimeOut({int seconds = 30}) {
-    timeoutInSeconds = seconds;
+  void setTimeOut({required int durationInSeconds}) {
+    timeOut = durationInSeconds <= 0 ? 60 : durationInSeconds;
+  }
+  void setAuthorizationPreferenceKey({required String authSharedPreferenceKey}) {
+    authKey =authSharedPreferenceKey;
   }
 
+  Map<String,String> _getHeader({bool isFormData=false}){
+    return {
+      if(isFormData==false)
+      'Content-Type':'application/json',
+      'Authorization':PreferenceService().getString(defaultValue: '',key: authKey)
+    };
+
+
+  }
   Future<Map<String, dynamic>> get({
-    required Uri url,
-    Map<String, dynamic> requestBody = const {},
-    Map<String, String> headers = const {},
+    required String url,
+    required Map<String, String> headers,
   }) async {
-    Map<String, dynamic> data = {};
+    Map<String, dynamic> apiResponse = {};
     try {
       final response = await http
-          .get(url, headers: headers)
+          .get(Uri.parse(url), headers: headers)
           .timeout(
-            Duration(seconds: timeoutInSeconds),
-            onTimeout: () =>
-                http.Response('{"error":"Request timed out"}', 408),
+            Duration(seconds: timeOut),
+            onTimeout: () {
+              return http.Response(
+                json.encode({'error': 'Request timed out'}),
+                408,
+              );
+            },
           );
-      data = json.decode(response.body);
-      data.addAll({'httpStatusCode': response.statusCode});
+      apiResponse = json.decode(response.body);
+      apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
-      data = {'httpStatusCode': -1, 'error': 'An error occurred: $e'};
-      log(e.toString());
+      apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
+      LoggerService().log(message: e);
     }
-    return data;
+    return apiResponse;
   }
 
   Future<Map<String, dynamic>> post({
-    required Uri url,
-    required bool isFormData,
-    Map<String, dynamic> requestBody = const {},
-    Map<String, String> headers = const {},
+    required String url,
+    required Map<String, String> headers,
+    required Map<String, dynamic> requestBody,
   }) async {
-    Map<String, dynamic> data = {};
+    Map<String, dynamic> apiResponse = {};
     try {
-      if (isFormData) {
-        headers['Content-Type'] = 'multipart/form-data';
-        final http.MultipartRequest request = http.MultipartRequest(
-          'POST',
-          url,
-        );
-      } else {
-        headers['Content-Type'] = 'application/json';
-      }
+      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
+      LoggerService().log(message: 'request url===>$url\nRequest body===>${json.encode(requestBody)}');
       final response = await http
           .post(
-            url,
-            body: isFormData ? {} : json.encode(requestBody),
-            headers: headers,
+            Uri.parse(url),
+            headers: _getHeader(isFormData: hasFile),
+            body:hasFile ?  requestBody:  json.encode(requestBody),
           )
           .timeout(
-            Duration(seconds: timeoutInSeconds),
-            onTimeout: () =>
-                http.Response('{"error":"Request timed out"}', 408),
+            Duration(seconds: timeOut),
+            onTimeout: () {
+              return http.Response(
+                json.encode({'error': 'Request timed out'}),
+                408,
+              );
+            },
           );
-      data = json.decode(response.body);
-      data.addAll({'httpStatusCode': response.statusCode});
+      apiResponse = json.decode(response.body);
+      apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
-      data = {'httpStatusCode': -1, 'error': 'An error occurred: $e'};
-      log(e.toString());
+      apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
+      LoggerService().log(message: e);
     }
-    return data;
+    return apiResponse;
   }
 
   Future<Map<String, dynamic>> put({
-    required Uri url,
-    Map<String, dynamic> requestBody = const {},
-    Map<String, String> headers = const {},
+    required String url,
+    required Map<String, String> headers,
+    required Map<String, dynamic> requestBody,
   }) async {
-    Map<String, dynamic> data = {};
+
+    Map<String, dynamic> apiResponse = {};
     try {
+      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
       final response = await http
-          .get(url, headers: headers)
+          .put(Uri.parse(url), headers: _getHeader(isFormData: hasFile), body: hasFile ?  requestBody:  json.encode(requestBody))
           .timeout(
-            Duration(seconds: timeoutInSeconds),
-            onTimeout: () =>
-                http.Response('{"error":"Request timed out"}', 408),
+            Duration(seconds: timeOut),
+            onTimeout: () {
+              return http.Response(
+                json.encode({'error': 'Request timed out'}),
+                408,
+              );
+            },
           );
-      data = json.decode(response.body);
-      data.addAll({'httpStatusCode': response.statusCode});
+      apiResponse = json.decode(response.body);
+      apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
-      data = {'httpStatusCode': -1, 'error': 'An error occurred: $e'};
-      log(e.toString());
+      apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
+      LoggerService().log(message: e);
     }
-    return data;
+    return apiResponse;
+  }
+
+  Future<Map<String, dynamic>> delete({
+    required String url,
+    required Map<String, String> headers,
+    required Map<String, dynamic> requestBody,
+  }) async {
+    Map<String, dynamic> apiResponse = {};
+    try {
+      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
+      final response = await http
+          .delete(
+            Uri.parse(url),
+            headers: _getHeader(isFormData: hasFile),
+            body: hasFile ?  requestBody:  json.encode(requestBody),
+          )
+          .timeout(
+            Duration(seconds: timeOut),
+            onTimeout: () {
+              return http.Response(
+                json.encode({'error': 'Request timed out'}),
+                408,
+              );
+            },
+          );
+      apiResponse = json.decode(response.body);
+      apiResponse.addAll({'httpStatusCode': response.statusCode});
+    } catch (e) {
+      apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
+      LoggerService().log(message: e);
+    }
+    return apiResponse;
   }
 }
