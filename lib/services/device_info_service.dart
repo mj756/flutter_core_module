@@ -63,7 +63,9 @@ class DeviceInfoService {
           );
         }
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      LoggerService().log(message: 'Error occurred while getting device data $e');
+    }
   }
 
   Map<String, dynamic> getDeviceData() {
@@ -72,7 +74,18 @@ class DeviceInfoService {
       if (data.isEmpty) {
         return {};
       } else {
-        return json.decode(data);
+       Map<String,dynamic> temp= json.decode(data);
+       if(temp.containsKey('fcmToken')==false || temp['fcmToken'].isEmpty){
+         String fcmToken = PreferenceService().getString(key:'prefKeyFcmToken');
+         temp['fcmToken']=fcmToken;
+         PreferenceService().setString(
+           key:'prefKeyDeviceInfo',
+           value:json.encode(temp),
+         );
+         return temp;
+       }else{
+         return temp;
+       }
       }
     } catch (e) {
       LoggerService().log(message: e);

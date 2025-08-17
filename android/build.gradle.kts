@@ -1,24 +1,24 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    //id("dev.flutter.flutter-gradle-plugin")
+}
+
+android {
+    namespace = "com.example.flutter_core_module"
+    compileSdk = 35
+    buildFeatures {
+        buildConfig = true
+    }
+    defaultConfig {
+        minSdk = 21
+    }
+    kotlin {
+        jvmToolchain(17)
     }
 }
 
-val newBuildDir: Directory =
-    rootProject.layout.buildDirectory
-        .dir("../../build")
-        .get()
-rootProject.layout.buildDirectory.value(newBuildDir)
+dependencies {
+    implementation(kotlin("stdlib"))
 
-subprojects {
-    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
-    project.evaluationDependsOn(":app")
-}
-
-tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
 }

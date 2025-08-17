@@ -12,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import '../services/download/download_factory.dart';
 
 class HelperService {
-  final _methodChannel = 'flutter.sample/channel';
+  final _methodChannel = 'flutter.core.module/channel';
 
   Future<String> getDownloadDirectory() async {
     MethodChannel channel = MethodChannel(_methodChannel);
@@ -26,7 +26,7 @@ class HelperService {
         return downloadsDir.path;
       }
     } catch (ex) {
-      LoggerService().log(message: ex);
+      LoggerService().log(message: 'Error while getting download directory===>$ex');
     }
     return '';
   }

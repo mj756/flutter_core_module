@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show WidgetsFlutterBinding;
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_core_module/services/preference_service.dart';
 import 'package:flutter_core_module/utils/event_bus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,20 +13,11 @@ import 'logger_service.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  eventBus.fire(
-    NotificationTapped(response: notificationResponse),
-  ); // ignore: avoid_print
-  print(
-    'notification(${notificationResponse.id}) action tapped: '
-    '${notificationResponse.actionId} with'
-    ' payload: ${notificationResponse.payload}',
-  );
-  if (notificationResponse.input?.isNotEmpty ?? false) {
-    // ignore: avoid_print
-    print(
-      'notification action tapped with input: ${notificationResponse.input}',
-    );
-  }
+  WidgetsFlutterBinding.ensureInitialized();
+  print('background notification is tapped');
+
+  const MethodChannel channel = MethodChannel('flutter.core.module/channel');
+  channel.invokeMethod('notificationClick',notificationResponse);
 }
 
 class NotificationService {
@@ -35,8 +28,6 @@ class NotificationService {
   String notificationChannelId = '';
   String notificationChannelName = '';
   late NotificationDetails notificationDetail;
-  final StreamController<NotificationResponse> _tapStreamController =
-      StreamController.broadcast();
 
   Future<String> getFcmToken({String vapidKeyForWeb = ''}) async {
     String token = '';
@@ -51,12 +42,13 @@ class NotificationService {
           PreferenceService().setString(key:'prefKeyFcmToken', value:token);
         } else {
           token = await FirebaseMessaging.instance.getToken() ?? '';
+          PreferenceService().setString(key:'prefKeyFcmToken', value:token);
         }
       } else {
         token = PreferenceService().getString(key:'prefKeyFcmToken');
       }
     } catch (e) {
-      LoggerService().log(message: e);
+      LoggerService().log(message: 'Error while getting fcm token $e');
     }
     return token;
   }
@@ -103,20 +95,41 @@ class NotificationService {
         ),
       ),
       onDidReceiveNotificationResponse: (resp) {
-        _tapStreamController.add(resp);
+        eventBus.fire(NotificationTapped(isLocalNotificationTapped: true, response: resp));
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 
-  void showLocalNotification({required RemoteMessage message}) async {
+  Future<NotificationResponse?> getLaunchDetails() async {
+    NotificationResponse? detail;
+    try {
+      final NotificationAppLaunchDetails? notificationAppLaunchDetails =await flutterNotificationPlugin.getNotificationAppLaunchDetails();
+
+      if (notificationAppLaunchDetails!=null && notificationAppLaunchDetails.didNotificationLaunchApp) {
+        detail= notificationAppLaunchDetails.notificationResponse;
+        if (detail != null) {
+          print('Notification Launch detail is not empty');
+          eventBus.fire(NotificationTapped(isLocalNotificationTapped:true,response: detail));
+        }
+      }else{
+        print('Notification Launch detail is empty');
+      }
+
+    } catch (e) {
+      //
+    }
+    return detail;
+  }
+
+  void showLocalNotification({required String title,required String body, required Map<String,dynamic> message}) async {
     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     await flutterNotificationPlugin.show(
       id,
-      message.notification?.title ?? '',
-      message.notification?.body ?? '',
+     title,
+      body,
       notificationDetail,
-      payload: json.encode(message.data),
+      payload: json.encode(message),
     );
   }
 }

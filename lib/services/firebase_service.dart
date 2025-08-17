@@ -1,19 +1,37 @@
-import 'package:event_bus/event_bus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_core_module/main.dart';
 import 'package:flutter_core_module/utils/event_bus.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessage(RemoteMessage message) async {
+  print('background message is received');
   WidgetsFlutterBinding.ensureInitialized();
-  EventBus event = EventBus();
-  event.fire(BackGroundNotificationReceived(notification: message));
+  const MethodChannel channel = MethodChannel('flutter.core.module/channel');
+  await channel.invokeMethod('notificationReceived',message.toMap());
+
 }
 
 class FirebaseService {
+  final MethodChannel _methodChannel = MethodChannel('flutter.core.module/channel');
+  FirebaseService() {
+    _methodChannel.setMethodCallHandler((call) async {
+      if (call.method == 'notificationToDart') {
+        final data = call.arguments as Map<String,dynamic>;
+        print('Notification forwarded from Kotlin: $data');
+        eventBus.fire(BackGroundNotificationReceived(notification: data));
+      }else if (call.method == 'notificationClickToDart') {
+        final data = call.arguments as Map<String,dynamic>;
+        print('Notification tap forwarded from Kotlin: $data');
+        eventBus.fire(BackGroundNotificationReceived(notification: data));
+      }
+    });
+  }
+
+
   Future<void> initialize({required Map<String, dynamic> options}) async {
     try {
       if (kIsWeb) {
@@ -29,13 +47,22 @@ class FirebaseService {
         await Firebase.initializeApp();
 
         FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
-        FirebaseMessaging.onMessage.listen(onBackgroundMessage);
-        FirebaseMessaging.instance.getInitialMessage().then(
-          (RemoteMessage? message) {},
-        );
+        FirebaseMessaging.onMessage.listen((message){
+          eventBus.fire(BackGroundNotificationReceived(notification: message.data));
+          NotificationService().showLocalNotification(title: message.notification!.title??'', body: message.notification!.body??'', message: message.data);
+        });
+
+        FirebaseMessaging.onMessageOpenedApp.listen((message){
+          eventBus.fire(NotificationTapped(isLocalNotificationTapped: false, firebaseMessage: message));
+        });
+
       }
     } catch (e) {
       LoggerService().log(message: 'Firebase Service error==>$e');
     }
+  }
+  Future<RemoteMessage?> getInitialMessage()async{
+    RemoteMessage? msg=await FirebaseMessaging.instance.getInitialMessage();
+    return msg;
   }
 }
