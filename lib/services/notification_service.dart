@@ -9,21 +9,20 @@ import 'package:flutter_core_module/services/preference_service.dart';
 import 'package:flutter_core_module/utils/event_bus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'logger_service.dart';
+import 'package:flutter_core_module/services/logger_service.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   WidgetsFlutterBinding.ensureInitialized();
-  print('background notification is tapped');
 
   const MethodChannel channel = MethodChannel('flutter.core.module/channel');
   channel.invokeMethod('notificationClick',notificationResponse);
 }
 
 class NotificationService {
+  factory NotificationService() => _instance;
   NotificationService._internal();
   static final NotificationService _instance = NotificationService._internal();
-  factory NotificationService() => _instance;
   final flutterNotificationPlugin = FlutterLocalNotificationsPlugin();
   String notificationChannelId = '';
   String notificationChannelName = '';
@@ -70,7 +69,7 @@ class NotificationService {
             playSound: true,
             enableVibration: true,
           ),
-          iOS: DarwinNotificationDetails(),
+          iOS: const DarwinNotificationDetails(),
         );
 
     notificationChannelId = channelId;
@@ -109,11 +108,9 @@ class NotificationService {
       if (notificationAppLaunchDetails!=null && notificationAppLaunchDetails.didNotificationLaunchApp) {
         detail= notificationAppLaunchDetails.notificationResponse;
         if (detail != null) {
-          print('Notification Launch detail is not empty');
           eventBus.fire(NotificationTapped(isLocalNotificationTapped:true,response: detail));
         }
       }else{
-        print('Notification Launch detail is empty');
       }
 
     } catch (e) {

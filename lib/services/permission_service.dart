@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'logger_service.dart';
+import 'package:flutter_core_module/services/logger_service.dart';
 
 class PermissionService {
   factory PermissionService() => _instance;

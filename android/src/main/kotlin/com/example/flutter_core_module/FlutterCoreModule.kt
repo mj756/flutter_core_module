@@ -8,7 +8,7 @@ import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-
+import android.content.pm.PackageManager
 class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private var context: Context? = null
@@ -22,6 +22,7 @@ class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
+
             "notificationReceived"->{
                 Log.d("message","Notification received method call")
                 val data = call.arguments

@@ -1,9 +1,9 @@
 import 'package:clarity_flutter/clarity_flutter.dart';
 
 class ClarityService {
-  static final ClarityService _instance = ClarityService._internal();
-  factory ClarityService() => _instance;
   ClarityService._internal();
+  factory ClarityService() => _instance;
+  static final ClarityService _instance = ClarityService._internal();
   String _sessionId = '';
   ClarityConfig getConfig({required String projectId}) {
     return ClarityConfig(projectId: projectId, logLevel: LogLevel.None);

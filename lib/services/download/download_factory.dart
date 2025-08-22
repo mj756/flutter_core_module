@@ -4,7 +4,7 @@ import 'package:flutter_core_module/services/download/download_helper_mobile.dar
 import 'package:flutter_core_module/services/download/download_helper_web.dart'
     if (dart.library.html) 'download_helper_web.dart';
 
-import 'download_service.dart';
+import 'package:flutter_core_module/services/download/download_service.dart';
 
 class DownloadFactory {
   static DownloadService getInstance() {

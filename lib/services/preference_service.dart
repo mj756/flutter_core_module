@@ -5,7 +5,7 @@ import 'package:flutter_core_module/services/logger_service.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'encryption_service.dart';
+import 'package:flutter_core_module/services/encryption_service.dart';
 
 class PreferenceService {
   factory PreferenceService() => _instance;

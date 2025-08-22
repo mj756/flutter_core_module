@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:encrypt/encrypt.dart' as enc;
 
-import 'logger_service.dart';
+import 'package:flutter_core_module/services/logger_service.dart';
 
 class EncryptionService {
   factory EncryptionService() => _instance;

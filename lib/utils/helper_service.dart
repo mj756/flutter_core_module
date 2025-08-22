@@ -9,7 +9,7 @@ import 'package:flutter_core_module/main.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../services/download/download_factory.dart';
+import 'package:flutter_core_module/services/download/download_factory.dart';
 
 class HelperService {
   final _methodChannel = 'flutter.core.module/channel';
@@ -88,7 +88,6 @@ class HelperService {
         final String result = await MethodChannel(
           _methodChannel,
         ).invokeMethod('getFlavor');
-        print(result);
         return result;
       } else {
         return 'prod';

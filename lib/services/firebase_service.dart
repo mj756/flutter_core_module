@@ -8,7 +8,6 @@ import 'package:flutter_core_module/utils/event_bus.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessage(RemoteMessage message) async {
-  print('background message is received');
   WidgetsFlutterBinding.ensureInitialized();
   const MethodChannel channel = MethodChannel('flutter.core.module/channel');
   await channel.invokeMethod('notificationReceived',message.toMap());
@@ -16,20 +15,18 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 }
 
 class FirebaseService {
-  final MethodChannel _methodChannel = MethodChannel('flutter.core.module/channel');
   FirebaseService() {
     _methodChannel.setMethodCallHandler((call) async {
       if (call.method == 'notificationToDart') {
         final data = call.arguments as Map<String,dynamic>;
-        print('Notification forwarded from Kotlin: $data');
         eventBus.fire(BackGroundNotificationReceived(notification: data));
       }else if (call.method == 'notificationClickToDart') {
         final data = call.arguments as Map<String,dynamic>;
-        print('Notification tap forwarded from Kotlin: $data');
         eventBus.fire(BackGroundNotificationReceived(notification: data));
       }
     });
   }
+  final MethodChannel _methodChannel = const MethodChannel('flutter.core.module/channel');
 
 
   Future<void> initialize({required Map<String, dynamic> options}) async {

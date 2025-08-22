@@ -5,8 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 final EventBus eventBus = EventBus();
 
 class NotificationTapped {
-  bool isLocalNotificationTapped;
   NotificationTapped({required this.isLocalNotificationTapped,this.response,this.firebaseMessage});
+  bool isLocalNotificationTapped;
   final NotificationResponse? response;
   final RemoteMessage? firebaseMessage;
 }

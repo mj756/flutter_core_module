@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_core_module/enums.dart';
 import 'package:http/http.dart' as http;
 
-import 'logger_service.dart';
-import 'preference_service.dart';
+import 'package:flutter_core_module/services/logger_service.dart';
+import 'package:flutter_core_module/services/preference_service.dart';
 
 //5%=FVb7L%#c+f+J
 
@@ -14,10 +15,11 @@ class ApiService {
   static final ApiService _instance = ApiService._internal();
   int timeOut = 60;
   String authKey='';
-
+  bool showReleaseLog=false;
   void setTimeOut({required int durationInSeconds}) {
     timeOut = durationInSeconds <= 0 ? 60 : durationInSeconds;
   }
+
   void setAuthorizationPreferenceKey({required String authSharedPreferenceKey}) {
     authKey =authSharedPreferenceKey;
   }
@@ -48,11 +50,14 @@ class ApiService {
               );
             },
           );
+      if(response.statusCode!=200){
+        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e);
+      LoggerService().log(message: e,level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -81,11 +86,14 @@ class ApiService {
               );
             },
           );
+      if(response.statusCode!=200){
+        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e);
+      LoggerService().log(message: e,level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -110,11 +118,14 @@ class ApiService {
               );
             },
           );
+      if(response.statusCode!=200){
+        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e);
+      LoggerService().log(message: e,level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -142,11 +153,14 @@ class ApiService {
               );
             },
           );
+      if(response.statusCode!=200){
+        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e);
+      LoggerService().log(message: e,level: LogLevel.error);
     }
     return apiResponse;
   }
