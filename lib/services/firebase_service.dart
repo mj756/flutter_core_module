@@ -3,26 +3,43 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/main.dart';
+import 'package:flutter_core_module/streams/app_events.dart';
 import 'package:flutter_core_module/utils/event_bus.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackgroundMessage(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
+  AppEventsStream().addEvent(
+    AppEvent(type: AppEventType.backgroundNotificationReceived, data: message),
+  );
   const MethodChannel channel = MethodChannel('flutter.core.module/channel');
   await channel.invokeMethod('notificationReceived',message.toMap());
 
 }
 
 class FirebaseService {
-  FirebaseService() {
+  factory FirebaseService() => _instance;
+  FirebaseService._internal();
+  static final FirebaseService _instance = FirebaseService._internal();
+
+  void setHandler(){
     _methodChannel.setMethodCallHandler((call) async {
       if (call.method == 'notificationToDart') {
+        LoggerService().log(message: 'notification message from kotlin');
         final data = call.arguments as Map<String,dynamic>;
-        eventBus.fire(BackGroundNotificationReceived(notification: data));
+        AppEventsStream().addEvent(
+          AppEvent(type: AppEventType.backgroundNotificationReceived, data: data),
+        );
+        //  eventBus.fire(BackGroundNotificationReceived(notification: data));
       }else if (call.method == 'notificationClickToDart') {
+        LoggerService().log(message: 'notification click  message from kotlin');
         final data = call.arguments as Map<String,dynamic>;
-        eventBus.fire(BackGroundNotificationReceived(notification: data));
+        AppEventsStream().addEvent(
+          AppEvent(type: AppEventType.backgroundNotificationReceived, data: data),
+        );
+        // eventBus.fire(BackGroundNotificationReceived(notification: data));
       }
     });
   }
@@ -45,8 +62,12 @@ class FirebaseService {
 
         FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
         FirebaseMessaging.onMessage.listen((message){
-          eventBus.fire(BackGroundNotificationReceived(notification: message.data));
-          NotificationService().showLocalNotification(title: message.notification!.title??'', body: message.notification!.body??'', message: message.data);
+          AppEventsStream().addEvent(
+            AppEvent(type: AppEventType.notificationReceived, data: message),
+          );
+        //  eventBus.fire(BackGroundNotificationReceived(notification: message.data));
+          const MethodChannel channel = MethodChannel('flutter.core.module/channel');
+          channel.invokeMethod('notificationReceived',message.toMap());
         });
 
         FirebaseMessaging.onMessageOpenedApp.listen((message){

@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_core_module/enums.dart';
+import 'package:flutter_core_module/main.dart';
+import 'package:flutter_core_module/streams/app_events.dart';
 
 class ConnectivityService {
   factory ConnectivityService() => _instance;
@@ -20,8 +23,25 @@ class ConnectivityService {
   }
 
   void startListening() {
+    ApiService().hasInternet().then((result){
+      AppEventsStream().addEvent(
+        AppEvent(type: AppEventType.internetConnected, data: result),
+      );
+    });
     _subscription = _connectivity.onConnectivityChanged.listen((results) {
       final hasInternet = _hasConnection(results);
+
+      if(hasInternet){
+        ApiService().hasInternet().then((result){
+          AppEventsStream().addEvent(
+            AppEvent(type: AppEventType.internetConnected, data: true),
+          );
+        });
+      }else{
+        AppEventsStream().addEvent(
+          AppEvent(type: AppEventType.internetDisConnected, data: false),
+        );
+      }
       _connectionStreamController.add(hasInternet);
     });
   }

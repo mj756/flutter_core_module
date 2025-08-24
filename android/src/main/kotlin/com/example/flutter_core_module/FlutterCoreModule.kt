@@ -9,6 +9,9 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
+
 class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private var context: Context? = null
@@ -26,12 +29,18 @@ class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
             "notificationReceived"->{
                 Log.d("message","Notification received method call")
                 val data = call.arguments
-                channel.invokeMethod("notificationToDart", data)
+                Handler(Looper.getMainLooper()).post {
+                    channel.invokeMethod("notificationToDart", data)
+                }
+              //  channel.invokeMethod("notificationToDart", data)
             }
             "notificationClick"->{
                 Log.d("message","Notification click received method call")
                 val data = call.arguments
-                channel.invokeMethod("notificationClickToDart", data)
+                Handler(Looper.getMainLooper()).post {
+                    channel.invokeMethod("notificationToDart", data)
+                }
+               // channel.invokeMethod("notificationClickToDart", data)
             }
             "getFlavor"->{
                 val flavor: String = try {

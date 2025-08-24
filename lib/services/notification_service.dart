@@ -5,7 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show WidgetsFlutterBinding;
 import 'package:flutter/services.dart' show MethodChannel;
+import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/services/preference_service.dart';
+import 'package:flutter_core_module/streams/app_events.dart';
 import 'package:flutter_core_module/utils/event_bus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -94,7 +96,10 @@ class NotificationService {
         ),
       ),
       onDidReceiveNotificationResponse: (resp) {
-        eventBus.fire(NotificationTapped(isLocalNotificationTapped: true, response: resp));
+        AppEventsStream().addEvent(
+          AppEvent(type: AppEventType.backgroundNotificationReceived, data: resp),
+        );
+       // eventBus.fire(NotificationTapped(isLocalNotificationTapped: true, response: resp));
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );

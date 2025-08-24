@@ -10,3 +10,9 @@ export 'services/logger_service.dart';
 export 'services/notification_service.dart';
 export 'services/permission_service.dart';
 export 'services/preference_service.dart';
+export 'services/navigation_observer_service.dart';
+export 'extensions/custom_color_extension.dart';
+export 'extensions/size_box_extension.dart';
+export 'package:flutter_core_module/utils/size_config.dart';
+
+export 'package:firebase_messaging/firebase_messaging.dart' show RemoteMessage;

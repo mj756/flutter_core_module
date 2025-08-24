@@ -11,28 +11,44 @@ import 'package:flutter_core_module/services/preference_service.dart';
 
 class ApiService {
   factory ApiService() => _instance;
+
   ApiService._internal();
+
   static final ApiService _instance = ApiService._internal();
   int timeOut = 60;
-  String authKey='';
-  bool showReleaseLog=false;
+  String authKey = '';
+  bool showReleaseLog = false;
+
+  Future<bool> hasInternet() async {
+
+    try {
+      final response = await http.get(Uri.parse('https://www.google.com'))
+          .timeout(const Duration(seconds: 5));
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
   void setTimeOut({required int durationInSeconds}) {
     timeOut = durationInSeconds <= 0 ? 60 : durationInSeconds;
   }
 
-  void setAuthorizationPreferenceKey({required String authSharedPreferenceKey}) {
-    authKey =authSharedPreferenceKey;
+  void setAuthorizationPreferenceKey({
+    required String authSharedPreferenceKey,
+  }) {
+    authKey = authSharedPreferenceKey;
   }
 
-  Map<String,String> _getHeader({bool isFormData=false}){
+  Map<String, String> _getHeader({bool isFormData = false}) {
     return {
-      if(isFormData==false)
-      'Content-Type':'application/json',
-      'Authorization':PreferenceService().getString(defaultValue: '',key: authKey)
+      if (isFormData == false) 'Content-Type': 'application/json',
+      'Authorization': PreferenceService().getString(
+        defaultValue: '',
+        key: authKey,
+      ),
     };
-
-
   }
+
   Future<Map<String, dynamic>> get({
     required String url,
     required Map<String, String> headers,
@@ -50,14 +66,17 @@ class ApiService {
               );
             },
           );
-      if(response.statusCode!=200){
-        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      if (response.statusCode != 200) {
+        LoggerService().log(
+          message: 'API status code warning',
+          level: LogLevel.warning,
+        );
       }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e,level: LogLevel.error);
+      LoggerService().log(message: e, level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -66,34 +85,65 @@ class ApiService {
     required String url,
     required Map<String, String> headers,
     required Map<String, dynamic> requestBody,
+    bool isFormData=false
   }) async {
     Map<String, dynamic> apiResponse = {};
     try {
-      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
-      LoggerService().log(message: 'request url===>$url\nRequest body===>${json.encode(requestBody)}');
-      final response = await http
-          .post(
-            Uri.parse(url),
-            headers: _getHeader(isFormData: hasFile),
-            body:hasFile ?  requestBody:  json.encode(requestBody),
-          )
-          .timeout(
-            Duration(seconds: timeOut),
-            onTimeout: () {
-              return http.Response(
-                json.encode({'error': 'Request timed out'}),
-                408,
-              );
-            },
-          );
-      if(response.statusCode!=200){
-        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      bool hasFile = requestBody.values.any(
+        (v) => v is http.MultipartFile || v is File,
+      );
+      LoggerService().log(
+        message:
+            'request url===>$url\nRequest body===>${json.encode(requestBody)}',
+      );
+
+      late final http.Response response;
+      if (hasFile || isFormData) {
+        var request = http.MultipartRequest('POST', Uri.parse(url));
+        for (var entry in requestBody.entries) {
+          var key = entry.key;
+          var value = entry.value;
+
+          if (value is http.MultipartFile) {
+            request.files.add(value);
+          } else if (value is File) {
+            request.files.add(await http.MultipartFile.fromPath(key, value.path));
+          } else {
+            request.fields[key] = '$value';
+          }
+        }
+        await request.send().then((resp)async{
+          response= await http.Response.fromStream(resp);
+        });
+      } else {
+        response = await http
+            .post(
+              Uri.parse(url),
+              headers: _getHeader(isFormData: false),
+              body: json.encode(requestBody),
+            )
+            .timeout(
+              Duration(seconds: timeOut),
+              onTimeout: () {
+                return http.Response(
+                  json.encode({'error': 'Request timed out'}),
+                  408,
+                );
+              },
+            );
+      }
+
+      if (response.statusCode != 200) {
+        LoggerService().log(
+          message: 'API status code warning',
+          level: LogLevel.warning,
+        );
       }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e,level: LogLevel.error);
+      LoggerService().log(message: e, level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -102,30 +152,60 @@ class ApiService {
     required String url,
     required Map<String, String> headers,
     required Map<String, dynamic> requestBody,
+    bool isFormData=false
   }) async {
-
     Map<String, dynamic> apiResponse = {};
     try {
-      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
-      final response = await http
-          .put(Uri.parse(url), headers: _getHeader(isFormData: hasFile), body: hasFile ?  requestBody:  json.encode(requestBody))
-          .timeout(
-            Duration(seconds: timeOut),
-            onTimeout: () {
-              return http.Response(
-                json.encode({'error': 'Request timed out'}),
-                408,
-              );
-            },
-          );
-      if(response.statusCode!=200){
-        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      bool hasFile = requestBody.values.any(
+        (v) => v is http.MultipartFile || v is File,
+      );
+
+      late final http.Response response;
+      if (hasFile || isFormData) {
+        var request = http.MultipartRequest('PUT', Uri.parse(url));
+        for (var entry in requestBody.entries) {
+          var key = entry.key;
+          var value = entry.value;
+
+          if (value is http.MultipartFile) {
+            request.files.add(value);
+          } else if (value is File) {
+            request.files.add(await http.MultipartFile.fromPath(key, value.path));
+          } else {
+            request.fields[key] = '$value';
+          }
+        }
+        await request.send().then((resp)async{
+          response= await http.Response.fromStream(resp);
+        });
+      } else {
+        response = await http
+            .put(
+          Uri.parse(url),
+          headers: _getHeader(isFormData: false),
+          body: json.encode(requestBody),
+        )
+            .timeout(
+          Duration(seconds: timeOut),
+          onTimeout: () {
+            return http.Response(
+              json.encode({'error': 'Request timed out'}),
+              408,
+            );
+          },
+        );
+      }
+      if (response.statusCode != 200) {
+        LoggerService().log(
+          message: 'API status code warning',
+          level: LogLevel.warning,
+        );
       }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e,level: LogLevel.error);
+      LoggerService().log(message: e, level: LogLevel.error);
     }
     return apiResponse;
   }
@@ -134,33 +214,59 @@ class ApiService {
     required String url,
     required Map<String, String> headers,
     required Map<String, dynamic> requestBody,
+    bool isFormData=false
   }) async {
     Map<String, dynamic> apiResponse = {};
     try {
-      bool hasFile = requestBody.values.any((v) => v is http.MultipartFile|| v is File);
-      final response = await http
-          .delete(
-            Uri.parse(url),
-            headers: _getHeader(isFormData: hasFile),
-            body: hasFile ?  requestBody:  json.encode(requestBody),
-          )
-          .timeout(
-            Duration(seconds: timeOut),
-            onTimeout: () {
-              return http.Response(
-                json.encode({'error': 'Request timed out'}),
-                408,
-              );
-            },
-          );
-      if(response.statusCode!=200){
-        LoggerService().log(message: 'API status code warning',level: LogLevel.warning);
+      bool hasFile = requestBody.values.any(
+        (v) => v is http.MultipartFile || v is File,
+      );
+      late final http.Response response;
+      if (hasFile || isFormData) {
+        var request = http.MultipartRequest('DELETE', Uri.parse(url));
+        for (var entry in requestBody.entries) {
+          var key = entry.key;
+          var value = entry.value;
+
+          if (value is http.MultipartFile) {
+            request.files.add(value);
+          } else if (value is File) {
+            request.files.add(await http.MultipartFile.fromPath(key, value.path));
+          } else {
+            request.fields[key] = '$value';
+          }
+        }
+        await request.send().then((resp)async{
+          response= await http.Response.fromStream(resp);
+        });
+      } else {
+        response = await http
+            .delete(
+          Uri.parse(url),
+          headers: _getHeader(isFormData: false),
+          body: json.encode(requestBody),
+        )
+            .timeout(
+          Duration(seconds: timeOut),
+          onTimeout: () {
+            return http.Response(
+              json.encode({'error': 'Request timed out'}),
+              408,
+            );
+          },
+        );
+      }
+      if (response.statusCode != 200) {
+        LoggerService().log(
+          message: 'API status code warning',
+          level: LogLevel.warning,
+        );
       }
       apiResponse = json.decode(response.body);
       apiResponse.addAll({'httpStatusCode': response.statusCode});
     } catch (e) {
       apiResponse.addAll({'httpStatusCode': -1, 'error': e.toString()});
-      LoggerService().log(message: e,level: LogLevel.error);
+      LoggerService().log(message: e, level: LogLevel.error);
     }
     return apiResponse;
   }
