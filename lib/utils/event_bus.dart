@@ -1,4 +1,4 @@
-import 'package:event_bus/event_bus.dart';
+/*import 'package:event_bus/event_bus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' show RemoteMessage;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -16,3 +16,4 @@ class BackGroundNotificationReceived {
   BackGroundNotificationReceived({required this.notification});
   final Map<String,dynamic> notification;
 }
+*/

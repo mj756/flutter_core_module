@@ -9,46 +9,39 @@ class ConnectivityService {
   factory ConnectivityService() => _instance;
   ConnectivityService._internal();
   static final ConnectivityService _instance = ConnectivityService._internal();
-
+  bool hasInternet=true;
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _subscription;
-  final StreamController<bool> _connectionStreamController =
-      StreamController<bool>.broadcast();
-
-  Stream<bool> get onConnectionChange => _connectionStreamController.stream;
-
-  Future<bool> get isConnected async {
-    final results = await _connectivity.checkConnectivity();
-    return _hasConnection(results);
-  }
 
   void startListening() {
     ApiService().hasInternet().then((result){
+      hasInternet=result;
       AppEventsStream().addEvent(
-        AppEvent(type: AppEventType.internetConnected, data: result),
+        AppEvent(type:result==true ? AppEventType.internetConnected:AppEventType.internetDisConnected, data: result),
       );
     });
     _subscription = _connectivity.onConnectivityChanged.listen((results) {
-      final hasInternet = _hasConnection(results);
+      final hasConnection = _hasConnection(results);
 
-      if(hasInternet){
+      if(hasConnection){
         ApiService().hasInternet().then((result){
+          hasInternet=result;
           AppEventsStream().addEvent(
-            AppEvent(type: AppEventType.internetConnected, data: true),
+            AppEvent(type:result==true ? AppEventType.internetConnected:AppEventType.internetDisConnected, data: result),
           );
         });
       }else{
+        hasInternet=false;
         AppEventsStream().addEvent(
           AppEvent(type: AppEventType.internetDisConnected, data: false),
         );
       }
-      _connectionStreamController.add(hasInternet);
+
     });
   }
 
   void dispose() {
     _subscription?.cancel();
-    _connectionStreamController.close();
   }
 
   bool _hasConnection(List<ConnectivityResult> results) {

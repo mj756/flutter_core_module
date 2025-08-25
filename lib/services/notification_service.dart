@@ -8,7 +8,6 @@ import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/services/preference_service.dart';
 import 'package:flutter_core_module/streams/app_events.dart';
-import 'package:flutter_core_module/utils/event_bus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:flutter_core_module/services/logger_service.dart';
@@ -16,7 +15,7 @@ import 'package:flutter_core_module/services/logger_service.dart';
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   WidgetsFlutterBinding.ensureInitialized();
-
+  print('Notification is tapped in killed state');
   const MethodChannel channel = MethodChannel('flutter.core.module/channel');
   channel.invokeMethod('notificationClick',notificationResponse);
 }
@@ -99,7 +98,6 @@ class NotificationService {
         AppEventsStream().addEvent(
           AppEvent(type: AppEventType.backgroundNotificationReceived, data: resp),
         );
-       // eventBus.fire(NotificationTapped(isLocalNotificationTapped: true, response: resp));
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -113,7 +111,9 @@ class NotificationService {
       if (notificationAppLaunchDetails!=null && notificationAppLaunchDetails.didNotificationLaunchApp) {
         detail= notificationAppLaunchDetails.notificationResponse;
         if (detail != null) {
-          eventBus.fire(NotificationTapped(isLocalNotificationTapped:true,response: detail));
+          AppEventsStream().addEvent(
+            AppEvent(type: AppEventType.backgroundNotificationReceived, data: detail)
+          );
         }
       }else{
       }
