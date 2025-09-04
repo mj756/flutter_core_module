@@ -49,7 +49,11 @@ class LoggerService {
         break;
     }
 
-    developer.log(coloredMessage);
+    if(showLogInReleaseMode){
+      print(coloredMessage);
+    }else {
+      developer.log(coloredMessage);
+    }
     _writeLogToFile(message: coloredMessage);
   }
 

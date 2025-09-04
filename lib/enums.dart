@@ -10,11 +10,17 @@ enum AppEventType {
   notificationReceived,
   notificationClick,
   backgroundNotificationReceived,
+  initialNotificationReceived,
+  localNotificationTapped,
   appResumed,
   appPaused,
   appKilled,
+  appInActive,
+  appDetached,
   internetConnected,
   internetDisConnected,
+  downloadProgress,
+  uploadProgress,
 }
 
 enum InputType {
@@ -26,4 +32,5 @@ enum InputType {
   text,
   panNumber,
   aadhaarNumber,
+
 }

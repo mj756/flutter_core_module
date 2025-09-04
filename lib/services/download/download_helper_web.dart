@@ -3,7 +3,7 @@ import 'package:flutter_core_module/services/download/download_service.dart';
 
 class DownloadServiceWeb implements DownloadService {
   @override
-  Future<String?> download({required String url}) async {
+  Future<String?> download({required String url,String newFileName='',String? downloadPath}) async {
     try {
 
     } catch (e) {

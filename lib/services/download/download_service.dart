@@ -6,7 +6,7 @@ export 'download_service.dart'
     if (dart.library.html) 'download_helper_web.dart';
 
 abstract class DownloadService {
-  Future<String?> download({required String url});
+  Future<String?> download({required String url,String newFileName='',String? downloadPath});
   Future<void> uploadFile({required String path,required String url,required ApiMethod method,
     required Function(double) onProgress,
     required Function(String) onError

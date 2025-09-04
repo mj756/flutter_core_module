@@ -83,19 +83,25 @@ class HelperService {
   }
 
   Future<String> getAppFlavor() async {
+    String flavor='';
     try {
       if (Platform.isAndroid) {
         final String result = await MethodChannel(
           _methodChannel,
         ).invokeMethod('getFlavor');
-        return result;
+
+        flavor=result;
       } else {
-        return 'prod';
+        flavor='prod';
       }
     } catch (e) {
       LoggerService().log(message: 'Error while getting app flavor===>$e');
+      flavor='';
     }
-    return '';
+    if(flavor.isEmpty){
+      flavor='prod';
+    }
+    return flavor;
   }
 
   bool isUrl(String string) {

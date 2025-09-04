@@ -1,66 +1,41 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/services/connectivity_service.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter_core_module/services/logger_service.dart';
-import 'package:flutter_core_module/services/preference_service.dart';
+import 'package:http_interceptor/http/intercepted_client.dart';
+import 'package:http_interceptor/models/interceptor_contract.dart';
 
 //5%=FVb7L%#c+f+J
-
 class ApiService {
   factory ApiService() => _instance;
-
   ApiService._internal();
-
   static final ApiService _instance = ApiService._internal();
   int timeOut = 60;
   String authKey = '';
   bool showReleaseLog = false;
-
-  Future<bool> hasInternet() async {
-
-    try {
-      final response = await http.get(Uri.parse('https://www.google.com'))
-          .timeout(const Duration(seconds: 5));
-      return response.statusCode == 200;
-    } catch (_) {
-      return false;
+  InterceptorContract? _interceptor;
+  void setInterceptors({required InterceptorContract interceptor}) {
+    _interceptor = interceptor;
+  }
+  InterceptedClient? get client {
+    if (_interceptor != null) {
+      return InterceptedClient.build(interceptors: [_interceptor!]);
     }
+    return null;
   }
-  void setTimeOut({required int durationInSeconds}) {
-    timeOut = durationInSeconds <= 0 ? 60 : durationInSeconds;
-  }
-
-  void setAuthorizationPreferenceKey({
-    required String authSharedPreferenceKey,
-  }) {
-    authKey = authSharedPreferenceKey;
-  }
-
-  Map<String, String> _getHeader({bool isFormData = false}) {
-    return {
-      if (isFormData == false) 'Content-Type': 'application/json',
-      'Authorization': PreferenceService().getString(
-        defaultValue: '',
-        key: authKey,
-      ),
-    };
-  }
-
   Future<Map<String, dynamic>> get({
     required String url,
-    required Map<String, String> headers,
+    Map<String, String> headers=const {},
   }) async {
-
     Map<String, dynamic> apiResponse = {};
     try {
       if(ConnectivityService().hasInternet==false){
         apiResponse.addAll({'httpStatusCode': -2, 'error': 'No Internet connection'});
       }else{
-        final response = await http
+        final reqClient = client ?? http.Client();
+        final response = await reqClient
             .get(Uri.parse(url), headers: headers)
             .timeout(
           Duration(seconds: timeOut),
@@ -89,8 +64,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> post({
     required String url,
-    required Map<String, String> headers,
-    required Map<String, dynamic> requestBody,
+    required Map<String, dynamic> requestBody, Map<String, String> headers=const{},
     bool isFormData=false
   }) async {
     Map<String, dynamic> apiResponse = {};
@@ -109,6 +83,7 @@ class ApiService {
 
         late final http.Response response;
         if (hasFile || isFormData) {
+          final reqClient = client ?? http.Client();
           var request = http.MultipartRequest('POST', Uri.parse(url));
           for (var entry in requestBody.entries) {
             var key = entry.key;
@@ -123,14 +98,16 @@ class ApiService {
               request.fields[key] = '$value';
             }
           }
-          await request.send().then((resp) async {
+
+          await reqClient.send(request).then((resp) async {
             response = await http.Response.fromStream(resp);
           });
         } else {
-          response = await http
+          final reqClient = client ?? http.Client();
+          response = await reqClient
               .post(
             Uri.parse(url),
-            headers: _getHeader(isFormData: false),
+            headers: _getHeader(isFormData: hasFile || isFormData),
             body: json.encode(requestBody),
           )
               .timeout(
@@ -162,8 +139,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> put({
     required String url,
-    required Map<String, String> headers,
-    required Map<String, dynamic> requestBody,
+    required Map<String, dynamic> requestBody, Map<String, String> headers=const {},
     bool isFormData=false
   }) async {
     Map<String, dynamic> apiResponse = {};
@@ -177,6 +153,7 @@ class ApiService {
 
         late final http.Response response;
         if (hasFile || isFormData) {
+
           var request = http.MultipartRequest('PUT', Uri.parse(url));
           for (var entry in requestBody.entries) {
             var key = entry.key;
@@ -191,14 +168,16 @@ class ApiService {
               request.fields[key] = '$value';
             }
           }
-          await request.send().then((resp) async {
+          final reqClient = client ?? http.Client();
+          await reqClient.send(request).then((resp) async {
             response = await http.Response.fromStream(resp);
           });
         } else {
-          response = await http
+          final reqClient = client ?? http.Client();
+          response = await reqClient
               .put(
             Uri.parse(url),
-            headers: _getHeader(isFormData: false),
+            headers: _getHeader(isFormData: hasFile || isFormData),
             body: json.encode(requestBody),
           )
               .timeout(
@@ -257,14 +236,16 @@ class ApiService {
               request.fields[key] = '$value';
             }
           }
-          await request.send().then((resp) async {
+          final reqClient = client ?? http.Client();
+
+          await reqClient.send(request).then((resp) async {
             response = await http.Response.fromStream(resp);
           });
         } else {
           response = await http
               .delete(
             Uri.parse(url),
-            headers: _getHeader(isFormData: false),
+            headers: _getHeader(isFormData: hasFile || isFormData),
             body: json.encode(requestBody),
           )
               .timeout(
@@ -291,5 +272,23 @@ class ApiService {
       LoggerService().log(message: e, level: LogLevel.error);
     }
     return apiResponse;
+  }
+  Future<bool> hasInternet() async {
+    try {
+      final response = await http.get(Uri.parse('https://www.google.com'))
+          .timeout(const Duration(seconds: 60));
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+  void setTimeOut({required int durationInSeconds}) {
+    timeOut = durationInSeconds <= 0 ? 60 : durationInSeconds;
+  }
+
+  Map<String, String> _getHeader({bool isFormData = false}) {
+    return {
+      if (isFormData == false) 'Content-Type': 'application/json',
+    };
   }
 }

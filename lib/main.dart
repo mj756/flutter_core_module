@@ -14,5 +14,8 @@ export 'services/navigation_observer_service.dart';
 export 'extensions/custom_color_extension.dart';
 export 'extensions/size_box_extension.dart';
 export 'package:flutter_core_module/utils/size_config.dart';
+export 'package:http_interceptor/http_interceptor.dart';
+export 'package:http/http.dart' show MultipartFile;
 
 export 'package:firebase_messaging/firebase_messaging.dart' show RemoteMessage;
+export 'package:flutter_local_notifications/flutter_local_notifications.dart' show NotificationResponse;

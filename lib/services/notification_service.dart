@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show WidgetsFlutterBinding;
-import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/services/preference_service.dart';
 import 'package:flutter_core_module/streams/app_events.dart';
@@ -15,9 +15,11 @@ import 'package:flutter_core_module/services/logger_service.dart';
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   WidgetsFlutterBinding.ensureInitialized();
+  final port = IsolateNameServer.lookupPortByName('callback_port');
+  port?.send(notificationResponse);
   print('Notification is tapped in killed state');
-  const MethodChannel channel = MethodChannel('flutter.core.module/channel');
-  channel.invokeMethod('notificationClick',notificationResponse);
+  /*const MethodChannel channel = MethodChannel('flutter.core.module/channel');
+  channel.invokeMethod('notificationClick',notificationResponse);*/
 }
 
 class NotificationService {
@@ -96,7 +98,7 @@ class NotificationService {
       ),
       onDidReceiveNotificationResponse: (resp) {
         AppEventsStream().addEvent(
-          AppEvent(type: AppEventType.backgroundNotificationReceived, data: resp),
+          AppEvent(type: AppEventType.localNotificationTapped, data: resp),
         );
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
@@ -112,7 +114,7 @@ class NotificationService {
         detail= notificationAppLaunchDetails.notificationResponse;
         if (detail != null) {
           AppEventsStream().addEvent(
-            AppEvent(type: AppEventType.backgroundNotificationReceived, data: detail)
+            AppEvent(type: AppEventType.initialNotificationReceived, data: detail)
           );
         }
       }else{

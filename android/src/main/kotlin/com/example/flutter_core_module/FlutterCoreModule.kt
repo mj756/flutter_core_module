@@ -43,7 +43,7 @@ class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
                // channel.invokeMethod("notificationClickToDart", data)
             }
             "getFlavor"->{
-               /* val flavor: String = try {
+                val flavor: String = try {
                     val context = context ?: throw IllegalStateException("Plugin context is null")
                     val buildConfigClass = Class.forName("${context.packageName}.BuildConfig")
                     // Get only the FLAVOR field
@@ -53,16 +53,8 @@ class FlutterCoreModule : FlutterPlugin, MethodChannel.MethodCallHandler {
                 }
 
                 Log.d("FlutterCoreModule", "Returning flavor: $flavor")
-                result.success(flavor)*/
-                val flavor: String = try {
-                    val context = context ?: throw IllegalStateException("Plugin context is null")
-                    val buildConfigClass = Class.forName("${context.packageName}.BuildConfig")
-                    buildConfigClass.getDeclaredField("FLAVOR").get(null) as String
+                result.success(flavor)
 
-                } catch (e: Exception) {
-                    Log.d("FlutterCoreModule", "Returning error flavor:")
-                    "" // No flavor defined
-                }
             }
 
             "getFlavor1" -> {
