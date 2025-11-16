@@ -1,4 +1,4 @@
-import 'package:clarity_flutter/clarity_flutter.dart';
+/*import 'package:clarity_flutter/clarity_flutter.dart';
 
 class ClarityService {
   ClarityService._internal();
@@ -43,3 +43,4 @@ class ClarityService {
     return Clarity.isPaused();
   }
 }
+*/

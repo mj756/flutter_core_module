@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_core_module/enums.dart';
-import 'package:flutter_core_module/main.dart';
+import 'package:flutter_core_module/services/network/api_factory.dart';
 import 'package:flutter_core_module/streams/app_events.dart';
-
+import 'package:flutter/foundation.dart';
 class ConnectivityService {
   factory ConnectivityService() => _instance;
   ConnectivityService._internal();
@@ -12,10 +12,15 @@ class ConnectivityService {
   bool hasInternet=true;
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _subscription;
-
+ final _apiInstance=NetworkFactory.getInstance();
   void startListening() {
-    ApiService().hasInternet().then((result){
-      hasInternet=result;
+    _apiInstance.hasInternet().then((result){
+      if(kIsWeb){
+        hasInternet=true;
+      }else{
+        hasInternet=result;
+      }
+
       AppEventsStream().addEvent(
         AppEvent(type:result==true ? AppEventType.internetConnected:AppEventType.internetDisConnected, data: result),
       );
@@ -24,7 +29,7 @@ class ConnectivityService {
       final hasConnection = _hasConnection(results);
 
       if(hasConnection){
-        ApiService().hasInternet().then((result){
+        _apiInstance.hasInternet().then((result){
           hasInternet=result;
           AppEventsStream().addEvent(
             AppEvent(type:result==true ? AppEventType.internetConnected:AppEventType.internetDisConnected, data: result),

@@ -14,4 +14,7 @@ extension CustomString on String {
     }
     return defaultColor;
   }
+
 }
+
+

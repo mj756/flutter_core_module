@@ -76,7 +76,7 @@ class DeviceInfoService {
       } else {
        Map<String,dynamic> temp= json.decode(data);
        if(temp.containsKey('fcmToken')==false || temp['fcmToken'].isEmpty){
-         String fcmToken = PreferenceService().getString(key:'prefKeyFcmToken');
+         String fcmToken = PreferenceService().getString(key:'fcmToken');
          temp['fcmToken']=fcmToken;
          PreferenceService().setString(
            key:'prefKeyDeviceInfo',

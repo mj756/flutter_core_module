@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show AppLifecycleListener, WidgetsBinding;
 import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/main.dart';
 import 'package:flutter_core_module/services/connectivity_service.dart';
-
+import 'package:flutter_core_module/services/notifications/notification_factory.dart';
 
 class AppEvent {
   AppEvent({required this.type, this.data});
@@ -51,15 +52,19 @@ class AppEventsStream {
       },
     );
     ConnectivityService().startListening();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      LoggerService().log(message: 'Post frame call back');
-      await NotificationService().getLaunchDetails();
-      await FirebaseService().getInitialMessage();
-    });
+    if(!kIsWeb) {
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await NotificationFactory.getInstance().getLaunchDetails();
+        await FirebaseService().getInitialMessage();
+      });
+    }
   }
   void dispose(){
     _controller.close();
     _lifecycleListener.dispose();
-    ConnectivityService().dispose();
+    if(!kIsWeb) {
+      ConnectivityService().dispose();
+    }
   }
 }

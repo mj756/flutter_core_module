@@ -1,35 +1,63 @@
-import 'dart:async';
-import 'dart:convert';
+/*import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show WidgetsFlutterBinding;
+import 'package:flutter_core_module/classes/notification.dart';
+import 'package:flutter_core_module/classes/notification_model.dart';
 import 'package:flutter_core_module/enums.dart';
 import 'package:flutter_core_module/services/preference_service.dart';
 import 'package:flutter_core_module/streams/app_events.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_core_module/services/logger_service.dart';
 
 @pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
+Future<void> onActionReceivedMethod(
+    ReceivedAction receivedAction) async {
   WidgetsFlutterBinding.ensureInitialized();
   final port = IsolateNameServer.lookupPortByName('callback_port');
-  port?.send(notificationResponse);
+  port?.send(receivedAction);
   print('Notification is tapped in killed state');
-  /*const MethodChannel channel = MethodChannel('flutter.core.module/channel');
-  channel.invokeMethod('notificationClick',notificationResponse);*/
 }
 
 class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
   static final NotificationService _instance = NotificationService._internal();
-  final flutterNotificationPlugin = FlutterLocalNotificationsPlugin();
-  String notificationChannelId = '';
-  String notificationChannelName = '';
-  late NotificationDetails notificationDetail;
+  Future<void> initializeLocalNotifications({required List<CustomNotificationDetailModel> channels,required String defaultIcon}) async {
+     {
+
+      List<NotificationChannel> channelsList=List.empty(growable: true);
+      for(int i=0;i<channels.length;i++){
+        channelsList.add(NotificationChannel(
+            icon:channels[i].icon,
+            channelKey:channels[i].channelKey,
+            channelName:channels[i].channelName,
+            channelDescription:channels[i].channelDescription,
+            playSound: channels[i].playSound,
+            criticalAlerts: channels[i].criticalAlerts,
+            onlyAlertOnce: channels[i].onlyAlertOnce,
+            enableLights: channels[i].enableLights,
+            enableVibration: channels[i].enableVibration,
+            groupAlertBehavior:channels[i].groupAlertBehavior,
+            importance:channels[i].importance ,
+            defaultPrivacy: channels[i].defaultPrivacy,
+            defaultColor: channels[i].defaultColor,
+            ledColor:channels[i].ledColor,
+            soundSource:channels[i].soundSource
+        ));
+      }
+
+      await AwesomeNotifications().initialize(
+          defaultIcon, channelsList,
+          debug: false);
+
+      AwesomeNotifications().setListeners(
+        onActionReceivedMethod: onActionReceivedMethod,
+      );
+    }
+  }
 
   Future<String> getFcmToken({String vapidKeyForWeb = ''}) async {
     String token = '';
@@ -54,7 +82,7 @@ class NotificationService {
     }
     return token;
   }
-
+/*
   Future<void> initialize({
     required String channelId,
     required String channelName,
@@ -103,37 +131,76 @@ class NotificationService {
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
-  }
+  }*/
 
-  Future<NotificationResponse?> getLaunchDetails() async {
-    NotificationResponse? detail;
+  Future<ReceivedAction?> getLaunchDetails() async {
+    ReceivedAction? detail;
     try {
-      final NotificationAppLaunchDetails? notificationAppLaunchDetails =await flutterNotificationPlugin.getNotificationAppLaunchDetails();
-
-      if (notificationAppLaunchDetails!=null && notificationAppLaunchDetails.didNotificationLaunchApp) {
-        detail= notificationAppLaunchDetails.notificationResponse;
-        if (detail != null) {
+        ReceivedAction? receivedAction = await AwesomeNotifications().getInitialNotificationAction(removeFromActionEvents: false);
+        if (receivedAction != null) {
           AppEventsStream().addEvent(
-            AppEvent(type: AppEventType.initialNotificationReceived, data: detail)
+              AppEvent(type: AppEventType.initialNotificationReceived, data:receivedAction)
           );
+        } else {
+          print('App was not launched by a notification');
         }
-      }else{
-      }
-
     } catch (e) {
       //
     }
     return detail;
   }
+  Future<void> showNotification(
+      {required MyNotificationModel payload,
+        required bool isScheduled,
+        bool isTimerNotification = false,
+        int durationInSeconds = 0}) async {
+    List<NotificationActionButton> actionButtons = List.empty(growable: true);
+    try {
+      for (int i = 0; i < payload.buttons.length; i++) {
 
-  void showLocalNotification({required String title,required String body, required Map<String,dynamic> message}) async {
-    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    await flutterNotificationPlugin.show(
-      id,
-     title,
-      body,
-      notificationDetail,
-      payload: json.encode(message),
-    );
+        actionButtons.add(NotificationActionButton(
+            color: payload.buttons[i].color,
+            key: payload.buttons[i].key,
+            actionType: payload.buttons[i].action,
+            label: payload.buttons[i].title));
+      }
+      NotificationLayout notificationLayout = NotificationLayout.BigText;
+      if (payload.imageURL.isNotEmpty) {
+        notificationLayout = NotificationLayout.BigPicture;
+      }
+
+      if (payload.channelKey.isNotEmpty) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            fullScreenIntent: true,
+            id: int.parse(payload.notificationId),
+            channelKey: payload.channelKey,
+            locked: payload.locked,
+            autoDismissible: payload.autoDismissible,
+            title: payload.title,
+            body: payload.message,
+            displayOnForeground: true,
+            displayOnBackground: true,
+            backgroundColor: payload.backgroundColor,
+            color: payload.fontColor,
+            hideLargeIconOnExpand: true,
+            category: NotificationCategory.Message,
+            criticalAlert: payload.criticalAlert,
+            wakeUpScreen: payload.wakeUpScreen,
+            bigPicture: payload.imageURL.isEmpty ? null : payload.imageURL,
+            largeIcon: 'resource://drawable/ic_launcher',
+            icon: 'resource://drawable/ic_launcher',
+            notificationLayout: notificationLayout,
+            payload:payload.notificationTapData,
+          ),
+          actionButtons: actionButtons,
+        );
+      }
+    } catch (e) {
+      LoggerService().log(message: e.toString());
+    }
   }
+
+
 }
+*/
