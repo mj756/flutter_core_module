@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_core_module/services/download/download_factory.dart';
+import 'package:flutter_core_module/utils/svg_helper/svg.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -52,6 +53,9 @@ class _ImageWidgetState extends State<ImageWidget> {
   Future<bool> _isLocalPath() async {
     bool fileExist = false;
     try {
+      if (kIsWeb) {
+        return fileExist;
+      }
       if (_isUrl == false && _isAssets == false) {
         fileExist = await File(widget.url).exists();
       }
@@ -192,36 +196,20 @@ class _ImageWidgetState extends State<ImageWidget> {
       future: _isLocalPath(),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Icon(Icons.error, color: Colors.red, size: widget.height);
+          return Icon(
+            Icons.access_time,
+            color: Colors.red,
+            size: widget.height,
+          );
         } else if (snapshot.connectionState == ConnectionState.done &&
             snapshot.data == true) {
-          if (_isSvg) {
-            return SvgPicture.file(
-              File(widget.url),
-              width: widget.width,
-              height: widget.height,
-              fit: widget.fit ?? BoxFit.cover,
-              colorFilter: widget.color != null
-                  ? ColorFilter.mode(widget.color!, BlendMode.srcIn)
-                  : null,
-              placeholderBuilder: (context) => SizedBox(
-                width: widget.width,
-                height: widget.height,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-              errorBuilder: (context, error, stackTrace) =>
-                  Icon(Icons.error, color: Colors.red, size: widget.height),
-            );
-          } else {
-            return Image.file(
-              File(widget.url),
-              width: widget.width,
-              height: widget.height,
-              fit: widget.fit,
-              errorBuilder: (context, error, stackTrace) =>
-                  Icon(Icons.error, color: Colors.red, size: widget.height),
-            );
-          }
+          return LocalImageFactory.getInstance(
+            isSvg: _isSvg,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit ?? BoxFit.cover,
+            url: widget.url,
+          );
         } else {
           return Icon(Icons.error, color: Colors.red, size: widget.height);
         }
